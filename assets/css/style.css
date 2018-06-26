@@ -1,0 +1,222 @@
+/* ШРИФТ ROBOTO */
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,500&subset=cyrillic,cyrillic-ext');
+/* ШРИФТ ROBOTO */
+
+/* СБРОС СТИЛЕЙ */
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{margin:0;padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}table{border-collapse:collapse;border-spacing:0}
+/* СБРОС СТИЛЕЙ */
+
+#order{
+    position: relative;
+    max-width: 324px;
+    width: 100%;
+    margin: 10% auto;
+    background: #F8F8F8;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.22);
+    font-family: 'Roboto', sans-serif;
+    font-weight: normal;
+    font-size: 9px;
+    padding: 14px 15px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+#order .sub-title{
+    font-size: 11px;
+    text-transform: uppercase;
+    margin: 13px 0 5px;
+}
+#order .row,
+#order .box-transfer{
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+}
+#order .box-transfer{
+    margin-top: 19px;
+    -webkit-align-items: center;
+    align-items: center;
+}
+#order .col{
+    max-width: 133px;
+    width: 100%;
+}
+#order [type="radio"]{
+    display: none;
+}
+#order .box-title{
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    font-size: 9px;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+}
+#order .box-temperature{
+    border: solid 1px #000;
+    border-radius: 15px;
+    height: 15px;
+    width: 60px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+#order .box-temperature label{
+    display: block;
+    width: 50%;
+    float: left;
+    height: 13px;
+    background-color: #fff;
+    transition: all .3s ease;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+#order .box-temperature label:hover{
+    background-color: #000;
+    cursor: pointer;
+}
+#order .box-temperature label.icon-summer{
+    background-image: url('../images/sun-black.svg');
+}
+#order .box-temperature label.icon-summer:hover,
+#order .box-temperature input#temperature-summ:checked + label
+{
+    background-image: url('../images/sun-yellow.svg');
+    background-color: #000;
+}
+#order .box-temperature label.icon-wind{
+    background-image: url('../images/wind-black.svg');
+}
+#order .box-temperature label.icon-wind:hover,
+#order .box-temperature input#temperature-wind:checked + label
+{
+    background-image: url('../images/wind-blue.svg');
+    background-color: #000;
+}
+#order .fieldset input,
+#order .fieldset select,
+#order textarea{
+    background-color: #C4C4C4;
+    border-radius: 15px;
+    border: none;
+    outline: none;
+    height: 22px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
+    padding: 6px 11px 5px;
+    font-size: 9px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+#order textarea{
+    min-height: 57px;
+}
+#order input[type="checkbox"]{
+    min-width: auto;
+}
+#order .fieldset option{
+    background-color: #C4C4C4;
+}
+
+#order .box-type-travel{
+    margin-bottom: 12px;
+}
+#order .box-type-travel label{
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    background-position: center center;
+    background-repeat: no-repeat;
+    transition: all .3s ease;
+}
+#order .box-type-travel label:hover,
+#order .box-type-travel input[type="radio"]:checked + label
+{
+    background-color: #000;
+    cursor: pointer;
+}
+#order .box-type-travel .icon-air{
+    background-image: url('../images/aircraft-black.svg');
+}
+#order .box-type-travel .icon-railway{
+    background-image: url('../images/raidway-black.svg');
+}
+#order .box-type-travel .icon-map{
+    background-image: url('../images/map-black.svg');
+}
+#order .box-type-travel .icon-air:hover,
+#order .box-type-travel input[type="radio"]:checked + .icon-air
+{
+    background-image: url('../images/aircraft-yellow.svg');
+}
+#order .box-type-travel .icon-railway:hover,
+#order .box-type-travel input[type="radio"]:checked + .icon-railway
+{
+    background-image: url('../images/raidway-yellow.svg');
+}
+#order .box-type-travel .icon-map:hover,
+#order .box-type-travel input[type="radio"]:checked + .icon-map
+{
+    background-image: url('../images/map-yellow.svg');
+}
+#order .fieldset{}
+#order .fieldset label{
+    display: block;
+    text-transform: uppercase;
+    margin: 10px 0 3px 0;
+}
+#order .box-transfer input[type="checkbox"]{
+    width: 23px;
+    height: 22px;
+    align-items: center;
+    margin: 0;
+}
+#order .center{
+    text-align: center;
+}
+#order .btn{
+    display: inline-block;
+    padding: 10px 15px 11px;
+    border-radius: 15px;
+    font-size: 11px;
+    border: none;
+    outline: none;
+    background-color: #FEE405;
+    -webkit-transition: all .3s ease;
+    -moz-transition: all .3s ease;
+    -ms-transition: all .3s ease;
+    -o-transition: all .3s ease;
+    transition: all .3s ease;
+}
+#order .btn:hover{
+    background-color: #000;
+    color: #FEE405;
+    cursor: pointer;
+}
+#order .section-fields-transfer{
+    display: none;
+}
+#order .order-footer{
+    margin-top: 21px;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    -webkit-align-items: center;
+    align-items: center;
+}
+
+#order ::-webkit-input-placeholder,
+#order ::-moz-placeholder,
+#order :-moz-placeholder,
+#order :-ms-input-placeholder,
+#order ::placeholder{
+    color: #000!important;
+    font-style: italic;
+}
