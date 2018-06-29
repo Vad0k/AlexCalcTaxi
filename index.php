@@ -2,8 +2,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="stylesheet" href="assets/css/style.css" />
 
-<script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU"></script>
+
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU"></script>
 <script src="assets/libs/inputmask/jquery.inputmask.bundle.min.js"></script>
 
 <?php
@@ -137,10 +138,10 @@ $arrayListCities = [
     <div class="box-title">
         <h3 class="title">ДЛЯ ЗАКАЗА ТАКСИ ОНЛАЙН ВЫБЕРЕТЕ СЕЗОН</h3>
         <div class="box-temperature">
-            <input type="radio" name="temperature" id="temperature-summ" checked="checked" />
+            <input type="radio" name="temperature" id="temperature-summ" checked="checked" value="лето"/>
             <label for="temperature-summ" class="icon-summer"></label>
 
-            <input type="radio" name="temperature" id="temperature-wind" />
+            <input type="radio" name="temperature" id="temperature-wind" value="зима" />
             <label for="temperature-wind" class="icon-wind"></label>
         </div>
     </div>
@@ -149,13 +150,13 @@ $arrayListCities = [
         <div class="col">
             <h2 class="sub-title">ОНЛАЙН ЗАКАЗ ТАКСИ</h2>
             <div class="box-type-travel">
-                <input type="radio" name="type-engine-from" id="order-air-from" checked="checked" />
+                <input type="radio" name="type-engine-from" id="order-air-from" value="airport" checked="checked" />
                 <label for="order-air-from" class="icon-air"></label>
 
-                <input type="radio" name="type-engine-from" id="order-railway-from"/>
+                <input type="radio" name="type-engine-from" id="order-railway-from" value="railway"/>
                 <label for="order-railway-from" class="icon-railway"></label>
 
-                <input type="radio" name="type-engine-from" id="order-map-from"/>
+                <input type="radio" name="type-engine-from" id="order-map-from" value="map"/>
                 <label for="order-map-from" class="icon-map"></label>
             </div>
 
@@ -174,8 +175,8 @@ $arrayListCities = [
 
                 <label for="order-payment">СПОСОБ ОПЛАТЫ</label>
                 <select id="order-payment" name="payment">
-                    <option>Наличным</option>
-                    <option>Безналичный расчет +2%</option>
+                    <option value="1">Наличным</option>
+                    <option value="2">Безналичный расчет +2%</option>
                 </select>
             </fieldset>
         </div>
@@ -194,15 +195,15 @@ $arrayListCities = [
 
             <fieldset class="fieldset">
                  <input type="text" list="order-city-to" placeholder="Куда?" name="town-to" />
-                <datalist id="order-city-to"><?php foreach ($arrayListCities as $item):?><option value="<?=$item?>" label="<?=$item?>" /><?php endforeach;?></datalist>
+                <datalist id="order-city-to"><?php foreach ($arrayListCities as $item):?><option value="<?=$item['title']?>" label="<?=$item['title']?>" /><?php endforeach;?></datalist>
 
                 <label for="order-type-engine">КЛАСС АВТО</label>
                 <select name="type-engine" id="order-type-engine">
-                    <option value="Стандарт">Стандарт</option>
-                    <option value="Комфорт">Комфорт</option>
-                    <option value="Микроавтобус">Микроавтобус</option>
-                    <option value="Минивэн">Минивэн</option>
-                    <option value="Бизнес">Бизнес</option>
+                    <option value="1">Стандарт</option>
+                    <option value="2">Комфорт</option>
+                    <option value="3">Микроавтобус</option>
+                    <option value="4">Минивэн</option>
+                    <option value="5">Бизнес</option>
                 </select>
 
 
@@ -210,7 +211,7 @@ $arrayListCities = [
                 <input type="text" name="order-number" id="order-number" placeholder="Например: LH 1444" />
 
                 <label for="order-time-from">ВРЕМЯ</label>
-                <input type="time" name="time" id="order-date-from" />
+                <input type="time" name="time" id="order-time-from" />
 
                 <div class="box-transfer">
                     <label for="order-is-transfer">ОБРАТНЫЙ ТРАНСФЕР</label>
@@ -256,6 +257,9 @@ $arrayListCities = [
 <script>
     (function() {
 
+
+        
+        
         function getNormalValue(value){
             return value < 10 ? '0'+value : value;
         }
@@ -266,19 +270,146 @@ $arrayListCities = [
           $('#order .section-fields-transfer').slideToggle(600);
         });
 
-        var time = $('#order .time-now');
+        let time = $('#order .time-now');
         getTime();
         setInterval(function() {
             getTime();
         },60);
 
         function getTime() {
-            var date = new Date();
+            let date = new Date();
             time.text(getNormalValue(getNormalValue(date.getHours()+':'+date.getMinutes())));
         }
 
     })();
 
 
+    ymaps.ready(init);
+
+    function init() {
+        // Стоимость за километр.
+        let DELIVERY_TARIFF = 20,
+            // Минимальная стоимость.
+            MINIMUM_COST = 500,
+            myMap = new ymaps.Map('map', {
+                center: [60.906882, 30.067233],
+                zoom: 9,
+                controls: []
+            }),
+            // Создадим панель маршрутизации.
+            routePanelControl = new ymaps.control.RoutePanel({
+                options: {
+                    // Добавим заголовок панели.
+                    showHeader: true,
+                    title: 'Расчёт доставки'
+                }
+            }),
+            zoomControl = new ymaps.control.ZoomControl({
+                options: {
+                    size: 'small',
+                    float: 'none',
+                    position: {
+                        bottom: 145,
+                        right: 10
+                    }
+                }
+            });
+        // Пользователь сможет построить только автомобильный маршрут.
+        routePanelControl.routePanel.options.set({
+            //types: {auto: true}
+            // Запрещаем показ кнопки, позволяющей менять местами начальную и конечную точки маршрута.
+            allowSwitch: false,
+            // Включим определение адреса по координатам клика.
+            // Адрес будет автоматически подставляться в поле ввода на панели, а также в подпись метки маршрута.
+            reverseGeocoding: true,
+            // Зададим виды маршрутизации, которые будут доступны пользователям для выбора.
+            types: { masstransit: true, pedestrian: true, taxi: true }
+        });
+
+
+
+
+        // Если вы хотите задать неизменяемую точку "откуда", раскомментируйте код ниже.
+        routePanelControl.routePanel.state.set({
+            // Тип маршрутизации.
+            type: 'masstransit',
+            // Выключим возможность задавать пункт отправления в поле ввода.
+            fromEnabled: false,
+            // Адрес или координаты пункта отправления.
+            from: 'Ялта',
+            // Включим возможность задавать пункт назначения в поле ввода.
+            toEnabled: false,
+            // Адрес или координаты пункта назначения.
+            to: 'Симферопольг'
+         });
+
+
+
+        myMap.controls.add(routePanelControl).add(zoomControl);
+
+        // Получим ссылку на маршрут.
+        routePanelControl.routePanel.getRouteAsync().then(function (route) {
+
+            // Зададим максимально допустимое число маршрутов, возвращаемых мультимаршрутизатором.
+            route.model.setParams({results: 1}, true);
+
+            // Повесим обработчик на событие построения маршрута.
+            route.model.events.add('requestsuccess', function () {
+
+                let activeRoute = route.getActiveRoute();
+                if (activeRoute) {
+                    // Получим протяженность маршрута.
+                    let length = route.getActiveRoute().properties.get("distance"),
+                        // Вычислим стоимость доставки.
+                        price = calculate(Math.round(length.value / 1000)),
+
+                        
+                        // Создадим макет содержимого балуна маршрута.
+                        balloonContentLayout = ymaps.templateLayoutFactory.createClass(
+                            '<span>Расстояние: ' + length.text + '.</span><br/>' +
+                            '<span style="font-weight: bold; font-style: italic">Стоимость доставки: ' + price + ' р.</span>');
+                    // Зададим этот макет для содержимого балуна.
+                    route.options.set('routeBalloonContentLayout', balloonContentLayout);
+                    // Откроем балун.
+                    $('#order-calc-result').html(price);
+                    activeRoute.balloon.open();
+                }
+            });
+
+        });
+        // Функция, вычисляющая стоимость доставки.
+        function calculate(routeLength) {
+            return Math.max(routeLength * DELIVERY_TARIFF, MINIMUM_COST);
+        }
+
+        function calc() {
+            let form = $('#order');
+            let valueTypeSeason = form.find('input[name="temperature"]').val();
+            let valueTypeTravelFrom = form.find('input[name="type-engine-from"]').val();
+            let valueTypeTravelTo = form.find('input[name="type-engine-to"]').val();
+            let valueNameCityFrom = form.find('#order-city-from');
+            let valueNameCityTo = form.find('#order-city-to');
+            let valueFIO = form.find('#order-name');
+            let valueTypeEngineFrom = form.find('#order-type-engine');
+            let valueOrderNumber = form.find('#order-number');
+            let valuePhone = form.find('#order-phone');
+            let valueDateFrom = form.find('#order-date-from');
+            let valueTimeFrom = form.find('#order-time');
+            let valueIsTransferBack = form.find('#order-is-transfer').checked;
+
+
+        }
+
+    }
+
 
 </script>
+
+<div id="map"></div>
+
+<style>
+    #map{
+        height: 800px;
+        width: 800px;
+    }
+</style>
